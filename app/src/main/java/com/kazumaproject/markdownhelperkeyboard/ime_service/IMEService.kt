@@ -28,6 +28,7 @@ import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputContentInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -833,6 +834,8 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
                 lastFlickConvertedNextHiragana = true
                 setComposingTextAfterEdit(inputString, spannableString)
             }
+            Timber.d("launchInputString: spannableString: $spannableString stringTail: $stringInTail")
+
         } else {
             if (stringInTail.isNotEmpty()) {
                 setComposingText(stringInTail, 0)
@@ -854,6 +857,7 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
                 }
             }
         }
+
     }
 
     private fun shouldEnableContinuousTap(inputString: String): Boolean {
@@ -1245,6 +1249,8 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     }
 
     private fun setEnterKeyAction(suggestions: List<Candidate>) {
+        Timber.d("setEnterKeyAction")
+
         val index = if (suggestionClickNum - 1 < 0) 0 else suggestionClickNum - 1
         val nextSuggestion = suggestions[index]
         if (nextSuggestion.type == (15).toByte()) {
@@ -1398,6 +1404,8 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     }
 
     private fun setEnterKeyPress() {
+        var text = currentInputConnection.getExtractedText(ExtractedTextRequest(),0).text
+        Timber.d("setEnterKeyPress $text\n")
         when (currentInputType) {
             InputTypeForIME.TextMultiLine,
             InputTypeForIME.TextImeMultiLine,
@@ -1431,6 +1439,8 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
             InputTypeForIME.TextEditTextInWebView,
             -> {
                 Timber.d("Enter key: called 3\n")
+
+                println(text)
                 sendKeyEvent(
                     KeyEvent(
                         KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER
@@ -1494,6 +1504,7 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
         suggestions: List<Candidate>,
         mainView: MainLayoutBinding
     ) {
+        Timber.d("handleSpaceKeyClick")
         if (insertString.isNotBlank()) {
             mainView.apply {
                 keyboardView.let { tenkey ->
@@ -1571,6 +1582,7 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     }
 
     private fun handleEmptyInputEnterKey(mainView: MainLayoutBinding) {
+        println("handleEmptyInputEnterKey")
         if (stringInTail.isNotEmpty()) {
             finishComposingText()
             stringInTail = EMPTY_STRING
@@ -1606,6 +1618,8 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     }
 
     private fun finishInputEnterKey() {
+        var text = currentInputConnection.getExtractedText(ExtractedTextRequest(),0).text
+        Timber.d("finishInputEnterKey: inputString: $text")
         finishComposingText()
         _inputString.update { EMPTY_STRING }
         resetFlagsEnterKeyNotHenkan()
@@ -1729,7 +1743,20 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
         }
     }
 
+    public fun showToast(text: CharSequence)
+    {
+        val msg = "【$text】は禁止ワードです。"
+        val toast= Toast.makeText(this@IMEService,msg,Toast.LENGTH_LONG)
+        toast.show()
+    }
+
     private fun actionInRightKeyPressed(gestureType: GestureType, insertString: String) {
+        var text = currentInputConnection.getExtractedText(ExtractedTextRequest(),0).text
+        Timber.d("actionInRightKeyPressed $insertString $text\n")
+        if (text=="登別") {
+            showToast(text)
+            currentInputConnection.deleteSurroundingText(text.length, 0)
+        }
         when {
             insertString.isEmpty() -> handleEmptyInputString(gestureType)
             !isHenkan -> handleNonHenkanTap(insertString)
@@ -1737,6 +1764,8 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     }
 
     private fun actionInRightKeyPressed(insertString: String) {
+        var text = currentInputConnection.getExtractedText(ExtractedTextRequest(),0).text
+        Timber.d("actionInRightKeyPressed2 $insertString $text\n")
         when {
             insertString.isEmpty() -> handleEmptyInputString()
             !isHenkan -> handleNonHenkan(insertString)
@@ -2187,6 +2216,7 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     }
 
     private fun applyComposingText(text: String, highlightLength: Int) {
+        Timber.d("applyComposingText $text")
         val spannableString = SpannableString(text)
         spannableString.setSpan(
             BackgroundColorSpan(getColor(R.color.orange)),

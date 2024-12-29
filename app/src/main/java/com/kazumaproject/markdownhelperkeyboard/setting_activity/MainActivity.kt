@@ -1,7 +1,12 @@
 package com.kazumaproject.markdownhelperkeyboard.setting_activity
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -51,4 +56,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

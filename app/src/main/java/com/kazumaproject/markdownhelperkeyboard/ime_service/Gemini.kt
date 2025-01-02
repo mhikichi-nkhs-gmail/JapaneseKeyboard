@@ -1,5 +1,6 @@
 package com.kazumaproject.markdownhelperkeyboard.ime_service
 
+import com.google.ai.client.generativeai.BuildConfig
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.BlockThreshold
 import com.google.ai.client.generativeai.type.GenerateContentResponse
@@ -46,7 +47,8 @@ class Gemini() {
     {
         model = GenerativeModel(
             "gemini-1.5-pro-latest",
-                API-KEY,
+                // ここで local.properties に apiKey=xxxxxx として保存したキーを読み込む
+                com.kazumaproject.markdownhelperkeyboard.BuildConfig.apiKey,
                 generationConfig {
                     temperature = 0.15f
                     topK = 32

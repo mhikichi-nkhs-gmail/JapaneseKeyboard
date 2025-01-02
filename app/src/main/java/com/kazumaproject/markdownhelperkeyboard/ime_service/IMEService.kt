@@ -210,6 +210,8 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     private var leftCursorKeyLongKeyPressed = false
     private var NGword = "登別"
 
+    private lateinit var gemini:Gemini
+
     private val vibratorManager: VibratorManager by lazy {
         getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
     }
@@ -242,6 +244,8 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     }
 
     override fun onCreateInputView(): View? {
+        gemini = Gemini()
+
         val ctx = ContextThemeWrapper(applicationContext, R.style.Theme_MarkdownKeyboard)
         mainLayoutBinding = MainLayoutBinding.inflate(LayoutInflater.from(ctx))
         return mainLayoutBinding?.root.apply {
@@ -1438,6 +1442,9 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
             -> {
                 currentInputConnection?.apply {
                     Timber.d("Enter key: called 3 $text\n")
+                    val ret = gemini.getResponse(text as? String?)
+                    println(ret)
+
                     if (text == NGword)
                     {
                         val msg = "【$text】は禁止ワードです"
@@ -1484,6 +1491,9 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
             InputTypeForIME.TextWebSearchViewFireFox,
             InputTypeForIME.TextSearchView -> {
                 currentInputConnection?.apply {
+                    val ret = gemini.getResponse(text as? String?)
+                    println(ret)
+
                     if (text == NGword) {
                         Timber.d(
                             "enter key search $text : ${EditorInfo.IME_ACTION_SEARCH}" + "\n${currentInputEditorInfo.inputType}" + "\n${currentInputEditorInfo.imeOptions}" + "\n${currentInputEditorInfo.actionId}" + "\n${currentInputEditorInfo.privateImeOptions}"

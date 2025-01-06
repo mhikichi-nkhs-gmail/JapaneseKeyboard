@@ -52,4 +52,8 @@
     <color name="mode_key_bg">#C9E7FD</color>
 
     <color name="recycler_view_size_change_button_tint">#1C1C1C</color>
+
+    <color name="test">#FF0000</color>
+    <color name="test2">#00FF00</color>
+
 </resources>

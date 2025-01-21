@@ -15,6 +15,7 @@ import android.text.SpannableString
 import android.text.TextUtils
 import android.text.style.BackgroundColorSpan
 import android.text.style.UnderlineSpan
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -28,6 +29,7 @@ import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputContentInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -219,6 +221,9 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     private val rightCursorKeyLongKeyPressed = AtomicBoolean(false)
     private val leftCursorKeyLongKeyPressed = AtomicBoolean(false)
     private var suggestionCache: MutableMap<String, List<Candidate>> = mutableMapOf()
+    private var NGword = "登別"
+
+    private lateinit var gemini:Gemini
 
     private val vibratorManager: VibratorManager by lazy {
         getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
@@ -252,6 +257,8 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     }
 
     override fun onCreateInputView(): View? {
+        gemini = Gemini()
+
         val ctx = ContextThemeWrapper(applicationContext, R.style.Theme_MarkdownKeyboard)
         mainLayoutBinding = MainLayoutBinding.inflate(LayoutInflater.from(ctx))
         return mainLayoutBinding?.root.apply {
@@ -1596,6 +1603,7 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     }
 
     private fun setEnterKeyPress() {
+        var text = currentInputConnection.getExtractedText(ExtractedTextRequest(),0).text
         when (currentInputType) {
             InputTypeForIME.TextMultiLine,
             InputTypeForIME.TextImeMultiLine,
@@ -1628,12 +1636,38 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
             InputTypeForIME.TextNotCursorUpdate,
             InputTypeForIME.TextEditTextInWebView,
                 -> {
-                Timber.d("Enter key: called 3\n")
-                sendKeyEvent(
-                    KeyEvent(
-                        KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER
-                    )
-                )
+                currentInputConnection?.apply {
+                    Timber.d("Enter key: called 3\n" )
+                    val ret = gemini.getResponse(text as? String?)
+                    print(ret)
+                    if (text == NGword)
+                    {
+                        Log.d("TEST","PASS");
+                        val toast = Toast.makeText(this@IMEService, "禁止ワード", Toast.LENGTH_LONG)
+                        toast.show()
+                        currentInputConnection.deleteSurroundingText(text.length,0)
+                    }
+                    else
+                    {
+                        Log.d("TEST","PASS");
+                        val ret = gemini.getResponse(text as? String?)
+                        print(ret)
+                        val toast = Toast.makeText(this@IMEService, "Gemini", Toast.LENGTH_LONG)
+                        toast.show()
+
+                        sendKeyEvent(
+                            KeyEvent(
+                                KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER
+                            )
+                        )
+                        sendKeyEvent(
+                            KeyEvent(
+                                KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER
+                            )
+                        )
+                    }
+                }
+
             }
 
             InputTypeForIME.TextNextLine -> {

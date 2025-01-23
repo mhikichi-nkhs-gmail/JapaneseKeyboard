@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import com.google.gson.Gson
 
 class Gemini() {
 
@@ -30,16 +31,16 @@ class Gemini() {
       "解答はJSON Schemaで出力してください。出力の改行は削除してください。
       {"type": "object",
          "properties": {
-         "適切度": {
+         "tekisetudo": {
             "type": "int"
          },
-         "文章": {
+         "word": {
             "type": "String"
          },
-         "置き換え案": {
+         "okikaeAn": {
             "type": "String"
          },
-         "カテゴリ": {
+         "category": {
             "type": "String"
          },
         }
@@ -88,7 +89,6 @@ class Gemini() {
                         restext=response.text
                         //("RES:"+restext)
                         //print(restext)
-                        //val tt = responce
                     }
                 }
             }
@@ -96,6 +96,16 @@ class Gemini() {
             println(e)
             println("Gemini Time out.")
         }
+        val gson = Gson()
+        //val json = """{"tekisetudo": 2, "word": "死んじゃった", "置き換え案": "亡くなった", "カテゴリ": "暴言"}"""
+        val data = gson.fromJson(restext, Data::class.java)
+        println(data.tekisetudo)
+        println(data.word)
+        if(2 == data.tekisetudo) {
+            
+        }
         return restext
     }
 }
+
+data class Data(val tekisetudo: Int, val word: String, val okikaeAn: String, val category: String)

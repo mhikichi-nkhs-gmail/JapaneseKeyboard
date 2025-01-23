@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CombinedVibration
 import android.os.Handler
+import android.os.Looper
 import android.os.VibrationEffect
 import android.os.VibratorManager
 import android.text.Spannable
@@ -1603,13 +1604,17 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
     }
 
     private fun setEnterKeyPress() {
+
         var text = currentInputConnection.getExtractedText(ExtractedTextRequest(),0).text
+        println("setEnterKeyPress: $text")
+        val ret = gemini.getResponse(text as? String?)
+        println(ret)
         when (currentInputType) {
             InputTypeForIME.TextMultiLine,
             InputTypeForIME.TextImeMultiLine,
             InputTypeForIME.TextShortMessage,
             InputTypeForIME.TextLongMessage,
-                -> {
+            -> {
                 commitText("\n", 1)
             }
 
@@ -1635,39 +1640,32 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
             InputTypeForIME.TextWebPassword,
             InputTypeForIME.TextNotCursorUpdate,
             InputTypeForIME.TextEditTextInWebView,
-                -> {
+            -> {
                 currentInputConnection?.apply {
-                    Timber.d("Enter key: called 3\n" )
-                    val ret = gemini.getResponse(text as? String?)
-                    print(ret)
-                    if (text == NGword)
-                    {
-                        Log.d("TEST","PASS");
-                        val toast = Toast.makeText(this@IMEService, "禁止ワード", Toast.LENGTH_LONG)
-                        toast.show()
-                        currentInputConnection.deleteSurroundingText(text.length,0)
-                    }
-                    else
-                    {
-                        Log.d("TEST","PASS");
-                        val ret = gemini.getResponse(text as? String?)
-                        print(ret)
-                        val toast = Toast.makeText(this@IMEService, "Gemini", Toast.LENGTH_LONG)
-                        toast.show()
+                    Timber.d("Enter key: called 3 $text\n")
+                    //val ret = gemini.getResponse(text as? String?)
+                    //println(ret)
 
+                    if (text.equals(NGword))
+                    {
+                        val msg = "【$text】は禁止ワードです"
+                        Timber.d(msg)
+                        val myhandler = Handler(Looper.getMainLooper())
+                        myhandler.post( Thread{
+                            val msg = "【$text】は禁止ワードです(SEARCH)"
+                            val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                            toast.show()
+                        }
+                        )
+                        currentInputConnection.deleteSurroundingText(text.length,0)
+                    } else {
                         sendKeyEvent(
                             KeyEvent(
                                 KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER
                             )
                         )
-                        sendKeyEvent(
-                            KeyEvent(
-                                KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER
-                            )
-                        )
                     }
                 }
-
             }
 
             InputTypeForIME.TextNextLine -> {
@@ -1686,15 +1684,36 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
             InputTypeForIME.Date,
             InputTypeForIME.Datetime,
             InputTypeForIME.Time,
-                -> {
+            -> {
                 performEditorAction(EditorInfo.IME_ACTION_DONE)
             }
 
-            InputTypeForIME.TextWebSearchView, InputTypeForIME.TextWebSearchViewFireFox, InputTypeForIME.TextSearchView -> {
-                Timber.d(
-                    "enter key search: ${EditorInfo.IME_ACTION_SEARCH}" + "\n${currentInputEditorInfo.inputType}" + "\n${currentInputEditorInfo.imeOptions}" + "\n${currentInputEditorInfo.actionId}" + "\n${currentInputEditorInfo.privateImeOptions}"
-                )
-                performEditorAction(EditorInfo.IME_ACTION_SEARCH)
+            InputTypeForIME.TextWebSearchView,
+            InputTypeForIME.TextWebSearchViewFireFox,
+            InputTypeForIME.TextSearchView -> {
+                currentInputConnection?.apply {
+                    //val ret = gemini.getResponse(text as? String?)
+                    //println(ret)
+
+                    if (text == NGword) {
+                        Timber.d(
+                            "enter key search $text : ${EditorInfo.IME_ACTION_SEARCH}" + "\n${currentInputEditorInfo.inputType}" + "\n${currentInputEditorInfo.imeOptions}" + "\n${currentInputEditorInfo.actionId}" + "\n${currentInputEditorInfo.privateImeOptions}"
+                        )
+                        val myhandler = Handler(Looper.getMainLooper())
+                        myhandler.post( Thread{
+                            val msg = "【$text】は禁止ワードです(SEARCH)"
+                            val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                            toast.show()
+                        }
+                        )
+
+                        currentInputConnection.deleteSurroundingText(text.length, 0)
+                    } else {
+                        //val ret = gemini.getResponse(text as? String?)
+                        //println(ret)
+                        performEditorAction(EditorInfo.IME_ACTION_SEARCH)
+                    }
+                }
             }
 
         }

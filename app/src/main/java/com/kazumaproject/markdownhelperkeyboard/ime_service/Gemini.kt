@@ -25,14 +25,21 @@ class Gemini() {
   }],
     "systemInstruction":{
     "parts":[{
-      "text": "この文章の言葉自体がかなり不快な思いをさせるなら2,全体的に不快な思いをさせるなら1,問題ないなら0として適切度を答えてください。言い換えた文章はなるべく一部分だけを言い換えてください。
-      解答はJSON Schemaで出力してください。出力の改行は削除してください。
+      "text": "この文章が検索してはいけない、相手に送信してはいけないものなら2,文章の表現を少し改善すべきものは1,問題ないなら0として適切度を答えてください。言い換えた文章はなるべく一部分だけを言い換えてください。
+      また、文章を置き換えるべきなら置き換え案を提案してください。その言葉が暴言、性的な発言、コンプライアンス違反、問題なし のどのカテゴリに分類されるか答えてください。説明は不要です。
+      "解答はJSON Schemaで出力してください。出力の改行は削除してください。
       {"type": "object",
          "properties": {
          "適切度": {
             "type": "int"
          },
          "文章": {
+            "type": "String"
+         },
+         "置き換え案": {
+            "type": "String"
+         },
+         "カテゴリ": {
             "type": "String"
          },
         }
@@ -80,7 +87,8 @@ class Gemini() {
                         response = model.generateContent(send_prpmpt)
                         restext=response.text
                         //("RES:"+restext)
-                        print(restext)
+                        //print(restext)
+                        //val tt = responce
                     }
                 }
             }

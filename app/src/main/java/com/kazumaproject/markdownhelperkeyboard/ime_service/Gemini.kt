@@ -26,7 +26,7 @@ class Gemini() {
   }],
     "systemInstruction":{
     "parts":[{
-      "text": "この文章が検索してはいけない、相手に送信してはいけないものなら2,文章の表現を少し改善すべきものは1,問題ないなら0として適切度を答えてください。言い換えた文章はなるべく一部分だけを言い換えてください。
+      "text": "この文章が未成年が検索してはいけない、相手に送信してはいけないものなら2,文章の表現を少し改善すべきものは1,問題ないなら0として適切度を答えてください。言い換えた文章はなるべく一部分だけを言い換えてください。
       また、文章を置き換えるべきなら置き換え案を提案してください。その言葉が暴言、性的な発言、コンプライアンス違反、問題なし のどのカテゴリに分類されるか答えてください。説明は不要です。
       "解答はJSON Schemaで出力してください。出力の改行は削除してください。
       {"type": "object",
@@ -96,14 +96,15 @@ class Gemini() {
             println(e)
             println("Gemini Time out.")
         }
-        val gson = Gson()
+        //以下テスト用
+        /*val gson = Gson()
         //val json = """{"tekisetudo": 2, "word": "死んじゃった", "置き換え案": "亡くなった", "カテゴリ": "暴言"}"""
         val data = gson.fromJson(restext, Data::class.java)
         println(data.tekisetudo)
         println(data.word)
         if(2 == data.tekisetudo) {
             
-        }
+        }*/
         return restext
     }
 }

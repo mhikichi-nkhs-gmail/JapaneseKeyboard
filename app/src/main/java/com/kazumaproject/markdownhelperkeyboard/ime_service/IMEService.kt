@@ -38,6 +38,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.kazumaproject.android.flexbox.FlexDirection
 import com.kazumaproject.android.flexbox.FlexboxLayoutManager
 import com.kazumaproject.android.flexbox.JustifyContent
@@ -1602,6 +1603,7 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
         isContinuousTapInputEnabled.set(true)
         lastFlickConvertedNextHiragana.set(true)
     }
+    data class Data(val tekisetudo: Int, val word: String, val okikaeAn: String, val category: String)
 
     private fun setEnterKeyPress() {
 
@@ -1609,6 +1611,21 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
         println("setEnterKeyPress: $text")
         val ret = gemini.getResponse(text as? String?)
         println(ret)
+        val gson = Gson()
+        //val json = """{"tekisetudo": 2, "word": "死んじゃった", "置き換え案": "亡くなった", "カテゴリ": "暴言"}"""
+        val data = gson.fromJson(ret, Data::class.java)
+        println(data.tekisetudo)
+        println(data.word)
+        if (2 == data.tekisetudo) {
+            println("Delete word!")
+            val msg = "【${data.category}】が検出されたため、文章を削除します。"
+            val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+            toast.show()
+            currentInputConnection.deleteSurroundingText(text.length,0)
+        }else if (1 == data.tekisetudo) {
+            println("Change word!")
+        }
+
         when (currentInputType) {
             InputTypeForIME.TextMultiLine,
             InputTypeForIME.TextImeMultiLine,
@@ -1664,6 +1681,10 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
                                 KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER
                             )
                         )
+                    }
+                    //以下Gemini APIのレスポンスから処理決め
+                    if (2 == data.tekisetudo) {
+                        currentInputConnection.deleteSurroundingText(text.length,0)
                     }
                 }
             }

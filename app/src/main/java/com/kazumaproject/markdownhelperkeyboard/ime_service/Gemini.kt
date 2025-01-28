@@ -26,16 +26,13 @@ class Gemini() {
   }],
     "systemInstruction":{
     "parts":[{
-      "text": "この文章が未成年が検索してはいけない、相手に送信してはいけないものなら2,文章の表現を少し改善すべきものは1,問題ないなら0として適切度を答えてください。言い換えた文章はなるべく一部分だけを言い換えてください。
-      また、文章を置き換えるべきなら置き換え案を提案してください。その言葉が暴言、性的な発言、コンプライアンス違反、問題なし のどのカテゴリに分類されるか答えてください。説明は不要です。
+      "text": "この文章が未成年が検索してはいけない、相手に送信してはいけないものなら2,文章の表現を少し改善すべきものは1,問題ないなら0として適切度を答えてください。
+      また、文章を置き換えるべきなら置き換え案を提案してください。その言葉が嫌がらせ、ヘイトスピーチ、性的な発言、危険なコンテンツ、問題なし のどのカテゴリに分類されるか答えてください。説明は不要です。
       "解答はJSON Schemaで出力してください。出力の改行は削除してください。
       {"type": "object",
          "properties": {
          "tekisetudo": {
             "type": "int"
-         },
-         "word": {
-            "type": "String"
          },
          "okikaeAn": {
             "type": "String"
@@ -63,6 +60,10 @@ class Gemini() {
                 responseMimeType = "application/json"
             },
             safetySettings =listOf(
+                //HARASSMENT(嫌がらせ)
+                //HATE_SPEECH(ヘイトスピーチ)
+                //SEXUALLY_EXPLICIT(性的表現)
+                //DANGEROUS_CONTENT(危険なコンテンツ)
                 SafetySetting(HarmCategory.HARASSMENT, BlockThreshold.NONE),
                 SafetySetting(HarmCategory.HATE_SPEECH, BlockThreshold.NONE),
                 SafetySetting(HarmCategory.SEXUALLY_EXPLICIT, BlockThreshold.NONE),

@@ -1603,7 +1603,7 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
         isContinuousTapInputEnabled.set(true)
         lastFlickConvertedNextHiragana.set(true)
     }
-    data class Data(val tekisetudo: Int, val word: String, val okikaeAn: String, val category: String)
+    data class Data(val tekisetudo: Int, val okikaeAn: String, val category: String)
 
     private fun setEnterKeyPress() {
 
@@ -1615,7 +1615,7 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
         //val json = """{"tekisetudo": 2, "word": "死んじゃった", "置き換え案": "亡くなった", "カテゴリ": "暴言"}"""
         val data = gson.fromJson(ret, Data::class.java)
         println(data.tekisetudo)
-        println(data.word)
+
         if (2 == data.tekisetudo) {
             println("Delete word!")
             val msg = "【${data.category}】が検出されたため、文章を削除します。"
@@ -1624,6 +1624,10 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
             currentInputConnection.deleteSurroundingText(text.length,0)
         }else if (1 == data.tekisetudo) {
             println("Change word!")
+            val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+            val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+            toast.show()
+            currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
         }
 
         when (currentInputType) {
@@ -1674,6 +1678,7 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
                             toast.show()
                         }
                         )
+                        println("Delete ban_word!")
                         currentInputConnection.deleteSurroundingText(text.length,0)
                     } else {
                         sendKeyEvent(
@@ -1721,6 +1726,8 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
                             "enter key search $text : ${EditorInfo.IME_ACTION_SEARCH}" + "\n${currentInputEditorInfo.inputType}" + "\n${currentInputEditorInfo.imeOptions}" + "\n${currentInputEditorInfo.actionId}" + "\n${currentInputEditorInfo.privateImeOptions}"
                         )
                         val myhandler = Handler(Looper.getMainLooper())
+                        val ret = gemini.getResponse(text as? String?)
+                        println(ret)
                         myhandler.post( Thread{
                             val msg = "【$text】は禁止ワードです(SEARCH)"
                             val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)

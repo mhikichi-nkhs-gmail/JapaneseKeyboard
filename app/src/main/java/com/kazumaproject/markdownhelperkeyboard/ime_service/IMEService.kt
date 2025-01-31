@@ -1603,7 +1603,9 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
         isContinuousTapInputEnabled.set(true)
         lastFlickConvertedNextHiragana.set(true)
     }
-    data class Data(val tekisetudo: Int, val okikaeAn: String, val category: String)
+    data class Data(val tekisetudo: String, val okikaeAn: String, val category: String)
+
+    data class Data2(val category: Int, val level: Int, val action: Int)
 
     private fun setEnterKeyPress() {
 
@@ -1614,21 +1616,282 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
         val gson = Gson()
         //val json = """{"tekisetudo": 2, "word": "死んじゃった", "置き換え案": "亡くなった", "カテゴリ": "暴言"}"""
         val data = gson.fromJson(ret, Data::class.java)
-        println(data.tekisetudo)
+        //println(data.tekisetudo)
+        //テスト用　カテゴリごとの判定
+        //嫌がらせ=3、ヘイトスピーチ=2、性的な発言=1、危険なコンテンツ=0
+        val category_number = "嫌がらせ"
+        val level_test = "2"
+        val action = "削除"
+        //val msg = "【${data.category}】が検出されたため、文章を削除します。"
 
-        if (2 == data.tekisetudo) {
+        when (data.category) {
+            "嫌がらせ" -> {
+                when (data.tekisetudo) {
+                    "2" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("嫌がらせ 2 error")
+                        }
+                    }
+                    "1" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("嫌がらせ 1 error")
+                        }
+                    }
+                    "0" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("嫌がらせ 0 error")
+                        }
+                    }
+                    else -> println("レベルはありません。")
+                }
+            }
+            "ヘイトスピーチ" -> {
+                when (data.tekisetudo) {
+                    "2" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("ヘイトスピーチ 2 error")
+                        }
+                    }
+                    "1" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("ヘイトスピーチ 1 error")
+                        }
+                    }
+                    "0" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("ヘイトスピーチ 0 error")
+                        }
+                    }
+                    else -> println("レベルはありません。")
+                }
+            }
+            "性的な発言" -> {
+                when (data.tekisetudo) {
+                    "2" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("性的な発言 2 error")
+                        }
+                    }
+                    "1" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("性的な発言 1 error")
+                        }
+                    }
+                    "0" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("性的な発言 0 error")
+                        }
+                    }
+                    else -> println("レベルはありません。")
+                }
+            }
+            "危険なコンテンツ" -> {
+                when (data.tekisetudo) {
+                    "2" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("危険なコンテンツ 2 error")
+                        }
+                    }
+                    "1" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("危険なコンテンツ 1 error")
+                        }
+                    }
+                    "0" -> {
+                        when (action) {
+                            "削除" -> {
+                                val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.deleteSurroundingText(text.length,0)
+                            }
+                            "変換" -> {
+                                val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                                val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                                toast.show()
+                                currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                            }
+                            "無し" -> println("処理なし")
+                            else -> println("危険なコンテンツ 0 error")
+                        }
+                    }
+                    else -> println("レベルはありません。")
+                }
+            }
+            else -> {
+                if ("2" == data.tekisetudo) {
+                    println("Delete word!")
+                    val msg = "【${data.category}】が検出されたため、文章を削除します。"
+                    val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                    toast.show()
+                    currentInputConnection.deleteSurroundingText(text.length,0)
+                }else if ("1" == data.tekisetudo) {
+                    println("Change word!")
+                    val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
+                    val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
+                    toast.show()
+                    currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
+                }
+                println("どれにも該当しません。")
+            }
+        }
+        /*
+        if ("2" == data.tekisetudo) {
             println("Delete word!")
             val msg = "【${data.category}】が検出されたため、文章を削除します。"
             val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
             toast.show()
             currentInputConnection.deleteSurroundingText(text.length,0)
-        }else if (1 == data.tekisetudo) {
+        }else if ("1" == data.tekisetudo) {
             println("Change word!")
             val msg = "誤解を与える文章なので【${data.okikaeAn}】に変換されました。"
             val toast = Toast.makeText(this@IMEService, msg, Toast.LENGTH_LONG)
             toast.show()
             currentInputConnection.replaceText(0,text.length, data.okikaeAn as CharSequence, 0,null)
-        }
+        }*/
 
         when (currentInputType) {
             InputTypeForIME.TextMultiLine,
@@ -1688,7 +1951,7 @@ class IMEService : InputMethodService(), LifecycleOwner, InputConnection {
                         )
                     }
                     //以下Gemini APIのレスポンスから処理決め
-                    if (2 == data.tekisetudo) {
+                    if ("2" == data.tekisetudo) {
                         currentInputConnection.deleteSurroundingText(text.length,0)
                     }
                 }

@@ -6,6 +6,7 @@ import com.google.ai.client.generativeai.type.GenerateContentResponse
 import com.google.ai.client.generativeai.type.HarmCategory
 import com.google.ai.client.generativeai.type.SafetySetting
 import com.google.ai.client.generativeai.type.generationConfig
+import com.kazumaproject.markdownhelperkeyboard.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -32,7 +33,7 @@ class Gemini() {
       {"type": "object",
          "properties": {
          "tekisetudo": {
-            "type": "int"
+            "type": "String"
          },
          "okikaeAn": {
             "type": "String"

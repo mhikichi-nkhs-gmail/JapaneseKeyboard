@@ -51,8 +51,9 @@
     <color name="enter_key_press">#C9E7FD</color>
     <color name="mode_key_bg">#C9E7FD</color>
 
-    <color name="main_color">#e8cfae</color>
-    <color name="sub_color">#fca098</color>
+    <color name="main_color">#e8cdaf</color>
+    <color name="sub_color">#f8e4b6</color>
+    <color name="sub2_color">#fca098</color>
     <color name="accent_color">#93dfc5</color>
 
     <color name="recycler_view_size_change_button_tint">#1C1C1C</color>

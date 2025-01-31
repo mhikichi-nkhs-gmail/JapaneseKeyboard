@@ -9,7 +9,7 @@ import com.kazumaproject.markdownhelperkeyboard.R
 class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_welcome)
+        setContentView(R.layout.`activity_login.xml`)
 
         // viewの取得
         val toAddActivity1 : Button = findViewById(R.id.toAddActivity1)//パスワード入力の所

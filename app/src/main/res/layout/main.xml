@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/main_color"
     tools:context=".setting_activity.MainActivity">
 
     <ImageView
@@ -32,6 +33,7 @@
     <!--app:layout_constraintBottom_toBottomOf="parent"で
     親の一番下に固定する-->
     <TextView
+        android:id="@+id/mainText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"

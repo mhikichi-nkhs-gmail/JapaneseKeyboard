@@ -10,11 +10,11 @@
         <item name="colorSecondaryVariant">@color/main_text_color</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/main_color</item><!-- 時間の色 -->
+        <!--<item name="android:statusBarColor">@android:color/transparent</item> 時間の色 -->
         <!-- Customize your theme here. -->
         <item name="android:splitMotionEvents">false</item>
         <item name="android:fontFamily">@font/roboto</item>
-        <item name="android:backgroundTint">@color/main_color</item><!-- 時間、背景、ボタン、戻るの色 -->
+        <!-- <item name="android:backgroundTint">@android:color/transparent</item> 時間、背景、ボタン、戻るの色 -->
         <item name="android:textColor">@color/black</item>
           <!-- アクションバー非表示 -->
         <item name="windowActionBar">false</item>

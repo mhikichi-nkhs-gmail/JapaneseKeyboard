@@ -46,7 +46,7 @@
         android:id="@+id/logoutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="150dp"
         android:backgroundTint="@android:color/transparent"
         android:text="ログアウト"
         android:textSize="20dp"
